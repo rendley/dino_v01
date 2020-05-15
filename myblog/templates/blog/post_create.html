@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+Create new post
+
+{% endblock %}
+
+
+{% block content %}
+
+
+
+    <div class="col-md-10 ">
+        <h1> Create Post </h1>
+
+        <form action="{% url 'post_create' %}" method="POST">
+
+
+
+        
+            <div class="form-group">
+                {% csrf_token %}
+                {{ form }}
+
+            </div>
+            
+
+
+            <button type="submit" class="btn btn-outline-info">Create Post</button>
+            
+        </form>
+    </div>
+
+{% endblock %}
