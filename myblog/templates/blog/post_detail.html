@@ -7,7 +7,7 @@
 
     {% block content %}
 
-            <a href="#" class="btn btn-outline-info">Edit post</a>
+            <a href="{% url 'post_update' pk=post.id %}" class="btn btn-outline-info">Update post</a>
 
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-outline-danger float-right" data-toggle="modal" data-target="#exampleModal">

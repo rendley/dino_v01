@@ -4,6 +4,7 @@ from .models import Post
 
 from django.views.generic import ListView, DetailView
 from .forms import EmailPostForm, CreatePostForm
+from django.contrib import messages
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -44,13 +45,27 @@ def post_create(request):
             form = form.save(commit=False)
             form.author = request.user
             form.save()
-            return HttpResponse(status=201)
+            messages.success(request, 'Post successfully create')
+            return redirect('post_list')
 
     form = CreatePostForm()
     return render(request, 'blog/post_create.html', {'form': form,})
 
-# def post_uplate(request, pk):
-#     post = get_object_or_404(Post, id=pk,)
+
+def post_update(request, pk):
+    post = get_object_or_404(Post, id=pk,)
+    if request.method == 'POST':
+        form = CreatePostForm(request.POST, instance=post)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.author = request.users
+            form.save()
+            messages.success(request, 'Post successfully create')
+            return redirect('post_list')
+
+    form = CreatePostForm(instance=post)
+    return render(request, 'blog/post_create.html', {'post': post, 'form': form,})
+
 
 
 def post_share(request, pk):

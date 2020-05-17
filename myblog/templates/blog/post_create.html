@@ -9,27 +9,41 @@ Create new post
 
 {% block content %}
 
+    {% if post %}
 
+        <div class="col-md-10 ">
+            <h1> Update Post </h1>
 
-    <div class="col-md-10 ">
-        <h1> Create Post </h1>
+            <form action="{% url 'post_update' pk=post.id %}" method="POST">
 
-        <form action="{% url 'post_create' %}" method="POST">
+                <div class="form-group">
+                    {% csrf_token %}
+                    {{ form }}
+                </div>
 
+                <button type="submit" class="btn btn-outline-info">Update Post</button>
+                <a href="{% url 'post_detail' slug=post.slug %}" class="btn btn-outline-info float-right">Back</a>
+            </form>
+        </div>
 
+    {% else %}
 
-        
-            <div class="form-group">
-                {% csrf_token %}
-                {{ form }}
+        <div class="col-md-10 ">
+            <h1> Create Post </h1>
 
-            </div>
-            
+            <form action="{% url 'post_create' %}" method="POST">
 
+                <div class="form-group">
+                    {% csrf_token %}
+                    {{ form }}
+                </div>
 
-            <button type="submit" class="btn btn-outline-info">Create Post</button>
-            
-        </form>
-    </div>
+                <button type="submit" class="btn btn-outline-info">Create Post</button>
+                <a href="{% url 'post_list' %}" class="btn btn-outline-info float-right">Back</a>
+
+            </form>
+        </div>
+
+    {% endif %}
 
 {% endblock %}
