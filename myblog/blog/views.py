@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from .models import Post
 
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
@@ -21,14 +21,27 @@ class BlogLoginView(LoginView):
     """
     template_name = 'blog/login.html'
     form_class = AuthUserForm
-    # не указываем reverse так как
-    # LOGIN_REDIRECT_URL = '/' - settings
     # success_url = reverse_lazy('post_list')
+    # не указываем success_url так как
+    # LOGIN_REDIRECT_URL = '/' - settings
+    # либо переопределяем метод success_url
+
+    # def get_success_url(self):
+    #     return self.success_url
+
+
+class BlogLogoutView(LogoutView):
+    """
+    LogoutView класс django отвечает
+    за выход пользователя
+    """
+    next_page = reverse_lazy('post_list')
 
 
 class BlogRegisterView(FormView):
-    """LoginView класс django отвечает
-       за авторизацию пользователя
+    """
+    LoginView класс django отвечает
+    за авторизацию пользователя
     """
     form_class = RegisterUserForm
     template_name = 'blog/register.html'
@@ -103,7 +116,7 @@ def post_update(request, pk):
         if form.is_valid():
             form = form.save(commit=False)
             try:
-                form.author = request.user
+                form.author == request.user
             except:
                 return redirect('post_list')
             form.save()

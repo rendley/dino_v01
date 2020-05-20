@@ -26,13 +26,6 @@
                     <a class="nav-link" href="{% url 'post_list' %}">Post <span class="sr-only">(current)</span></a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link " href="admin/">Admin</a>
-                </li>
-            </ul>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContentt">
-            <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'post_create' %}">Create Post<span class="sr-only">(current)</span></a>
                 </li>
@@ -42,11 +35,32 @@
                 </li>
             </ul>
 
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline my-2 my-sm-0" type="submit">Search</button>
+                </form>
 
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline my-2 my-sm-0" type="submit">Search</button>
-            </form>
+            <ul class="navbar-nav ml-auto">
+
+                {% if user.is_authenticated %}
+
+                    <li class="nav-link active">
+                        Welcome {{ user.username }} !!!
+                    </li>
+
+                    <li class="nav-item">
+                         <a class="nav-link" href="{% url 'logout_page' %}">Выйти</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link " href="{% url 'login_page' %}">Авторизация</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="{% url 'register_page' %}">Регистрация</a>
+                    </li>
+
+                {% endif %}
+            </ul>
         </div>
     </nav>
 

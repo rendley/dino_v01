@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
     {% block title %}
         {{ post.title }}
@@ -9,43 +9,14 @@
 
             <a href="{% url 'post_update' pk=post.id %}" class="btn btn-outline-info">Update post</a>
 
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-outline-danger float-right" data-toggle="modal" data-target="#exampleModal">
-                Delete post
-            </button>
-
-<!--            <a href="#" class="btn btn-outline-danger float-right"></a>-->
+            <a href="{% url 'post_delete' pk=post.id %}" class="btn btn-outline-danger float-right">Delete</a>
 
         <h1 class="mb-5 mt-5" >{{ post.title }}</h1>
             <p class="date"> Автор: {{ post.author }} | Опубликовано: {{ post.publish }}</p>
-        {{ post.body|linebreaks }}
-
+                {{ post.body|linebreaks }}
             <p>
-            <a href="{% url 'post_share' pk=post.id %}">Поделиться статьей</a>
+                <a href="{% url 'post_share' pk=post.id %}">Поделиться статьей</a>
             </p>
-
-
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    Do you really wont to delete Post {{ post.title }} ?
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Delete</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
 
     {% endblock %}
 
