@@ -1,13 +1,68 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from .models import Post
 
-from django.views.generic import ListView, DetailView
-from .forms import EmailPostForm, CreatePostForm
+from django.contrib.auth.views import LoginView
+
+
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
+from .forms import EmailPostForm, CreatePostForm, AuthUserForm, RegisterUserForm
 from django.contrib import messages
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+
+class BlogLoginView(LoginView):
+    """
+    class авторизации users
+    LoginView класс django отвечает
+    за авторизацию пользователя
+    """
+    template_name = 'blog/login.html'
+    form_class = AuthUserForm
+    # не указываем reverse так как
+    # LOGIN_REDIRECT_URL = '/' - settings
+    # success_url = reverse_lazy('post_list')
+
+
+class BlogRegisterView(FormView):
+    """LoginView класс django отвечает
+       за авторизацию пользователя
+    """
+    form_class = RegisterUserForm
+    template_name = 'blog/register.html'
+    success_url = reverse_lazy('login_page')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
+
+
+class PostListView(ListView):
+    model = Post
+    paginate_by = 3
+    # context_object_name = 'posts'
+    # template_name = 'blog/post_list.html'
+
+
+class PostDetailView(DetailView):
+    model = Post
+    # context_object_name = 'posts'
+    # template_name = 'blog/post_list.html'
+
+
+# нужно передать дополнительную проверку form.author = request.user
+# class PostCreateView(CreateView):
+#     model = Post
+#     form_class = CreatePostForm
+#     template_name = 'blog/post_create.html'
+#     success_url = reverse_lazy('post_list')
+
+################### FBV #######################
 
 # def post_view(request):
 #     posts_list = Post.objects.all()
@@ -25,20 +80,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #     post = get_object_or_404(Post, slug=slug, )
 #     return render(request, 'blog/post_detail.html', {'post': post, })
 
-class PostListView(ListView):
-    model = Post
-    paginate_by = 3
-    # context_object_name = 'posts'
-    # template_name = 'blog/post_list.html'
-
-
-class PostDetailView(DetailView):
-    model = Post
-    # context_object_name = 'posts'
-    # template_name = 'blog/post_list.html'
-
 
 def post_create(request):
+    print(request.user)
     if request.method == 'POST':
         form = CreatePostForm(request.POST)
         if form.is_valid():
@@ -58,14 +102,23 @@ def post_update(request, pk):
         form = CreatePostForm(request.POST, instance=post)
         if form.is_valid():
             form = form.save(commit=False)
-            form.author = request.users
+            try:
+                form.author = request.user
+            except:
+                return redirect('post_list')
             form.save()
-            messages.success(request, 'Post successfully create')
+            messages.success(request, 'Post successfully update')
             return redirect('post_list')
 
     form = CreatePostForm(instance=post)
     return render(request, 'blog/post_create.html', {'post': post, 'form': form,})
 
+
+def post_delete(request, pk):
+    post = get_object_or_404(Post, id=pk,)
+    if post.author == request.user:
+        post.delete()
+    return redirect('post_list')
 
 
 def post_share(request, pk):
@@ -77,4 +130,6 @@ def post_share(request, pk):
     else:
         form = EmailPostForm()
         return render(request, 'blog/share.html', {'post': post, 'form': form,})
+
+
 
