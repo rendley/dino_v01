@@ -95,7 +95,6 @@ class PostDetailView(DetailView):
 
 
 def post_create(request):
-    print(request.user)
     if request.method == 'POST':
         form = CreatePostForm(request.POST)
         if form.is_valid():
@@ -111,14 +110,11 @@ def post_create(request):
 
 def post_update(request, pk):
     post = get_object_or_404(Post, id=pk,)
+    if post.author != request.user:
+        return redirect('post_list')
     if request.method == 'POST':
         form = CreatePostForm(request.POST, instance=post)
         if form.is_valid():
-            form = form.save(commit=False)
-            try:
-                form.author == request.user
-            except:
-                return redirect('post_list')
             form.save()
             messages.success(request, 'Post successfully update')
             return redirect('post_list')
