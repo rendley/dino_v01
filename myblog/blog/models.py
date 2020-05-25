@@ -36,6 +36,7 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
+    """Модель комментариев"""
     post = models.ForeignKey(Post, verbose_name='Статья', on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, verbose_name='Автор', on_delete=models.CASCADE, related_name='comments')
     body = models.TextField('Содержание', )
@@ -47,5 +48,5 @@ class Comment(models.Model):
         ordering = ('-created',)
 
     def __str__(self):
-        return f'Комментарий {self.name}, поста {self.post}.'
+        return f'Комментарий {self.body}, поста {self.post}.'
 

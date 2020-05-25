@@ -2,12 +2,12 @@
 
     <div class="card mb-5">
         <div class="card-header">
-           Автор: {{ post.author }} | Опубликовано: {{ post.publish }}
+           Автор: {{ post.author }} | Опубликовано: {{ post.publish }} |
+            Количество комментариев {{ post.comments.count }}
         </div>
         <div class="card-body">
             <h5 class="card-title"><a href="{{ post.get_absolute_url }}">{{ post.title}}</a> </h5>
             <p class="card-text">{{ post.body|truncatewords:15|linebreaks }}</p>
-
 
             <a href="{{ post.get_absolute_url }}" class="btn btn-info">Read</a>
         </div>

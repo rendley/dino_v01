@@ -1,13 +1,14 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from .models import Post
+from .models import Post, Comment
 
 from django.contrib.auth.views import LoginView, LogoutView
 
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
-from .forms import EmailPostForm, CreatePostForm, AuthUserForm, RegisterUserForm
+from .forms import EmailPostForm, CreatePostForm, AuthUserForm, RegisterUserForm, CommentForm
 from django.contrib import messages
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -54,18 +55,31 @@ class BlogRegisterView(FormView):
     def form_invalid(self, form):
         return super().form_invalid(form)
 
+###########################################################################
+
 
 class PostListView(ListView):
     model = Post
-    paginate_by = 3
+    queryset = Post.objects.filter(status='published')
+    paginate_by = 5
     # context_object_name = 'posts'
     # template_name = 'blog/post_list.html'
 
 
 class PostDetailView(DetailView):
     model = Post
+    queryset = Post.objects.filter(status='published')
     # context_object_name = 'posts'
     # template_name = 'blog/post_list.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Через метод get_context_data передается
+        дополнительный контекс в шаблон
+        """
+        context = super().get_context_data(**kwargs)
+        context['form'] = CommentForm()
+        return context
 
 
 # нужно передать дополнительную проверку form.author = request.user
@@ -94,6 +108,7 @@ class PostDetailView(DetailView):
 #     return render(request, 'blog/post_detail.html', {'post': post, })
 
 
+@login_required(login_url='login_page')
 def post_create(request):
     if request.method == 'POST':
         form = CreatePostForm(request.POST)
@@ -103,11 +118,11 @@ def post_create(request):
             form.save()
             messages.success(request, 'Post successfully create')
             return redirect('post_list')
-
     form = CreatePostForm()
     return render(request, 'blog/post_create.html', {'form': form,})
 
 
+@login_required(login_url='login_page')
 def post_update(request, pk):
     post = get_object_or_404(Post, id=pk,)
     if post.author != request.user:
@@ -123,6 +138,7 @@ def post_update(request, pk):
     return render(request, 'blog/post_create.html', {'post': post, 'form': form,})
 
 
+@login_required(login_url='login_page')
 def post_delete(request, pk):
     post = get_object_or_404(Post, id=pk,)
     if post.author == request.user:
@@ -130,6 +146,43 @@ def post_delete(request, pk):
     return redirect('post_list')
 
 
+@login_required(login_url='login_page')
+def comment_create(request, pk):
+    post = get_object_or_404(Post, id=pk)
+
+    if request.method == 'POST':
+        comment = CommentForm(request.POST)
+        if comment.is_valid():
+            comment = comment.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            messages.success(request, 'Post successfully create')
+            return redirect('post_list')
+
+    form = CommentForm()
+    return render(request, 'blog/post_detail.html', {'form': form, })
+
+
+@login_required(login_url='login_page')
+def comment_update(request, pk):
+    pass
+    # comment = get_object_or_404(Comment, id=pk,)
+    # print(comment)
+    # if comment.author != request.user:
+    #     return redirect('post_list')
+    # if request.method == 'POST':
+    #     comment = CommentForm(request.POST, instance=comment)
+    #     if comment.is_valid():
+    #         comment.save()
+    #         messages.success(request, 'Post successfully update')
+    #         return redirect('post_list')
+    #
+    # form = CommentForm(instance=comment)
+    # return render(request, 'blog/post_detail.html', {'comment': comment, 'form': form,})
+
+
+@login_required(login_url='login_page')
 def post_share(request, pk):
     post = get_object_or_404(Post, id=pk, status='published')
     if request.method == 'POST':

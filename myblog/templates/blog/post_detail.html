@@ -7,11 +7,15 @@
 
     {% block content %}
 
-            {% if user.is_authenticated  and post.author == user %}
+        {% if user.is_authenticated  %}
 
-                    <a href="{% url 'post_update' pk=post.id %}" class="btn btn-outline-info">Update post</a>
+            {% if post.author == user %}
 
-                    <a href="{% url 'post_delete' pk=post.id %}" class="btn btn-outline-danger float-right">Delete</a>
+                <a href="{% url 'post_update' pk=post.id %}" class="btn btn-outline-info">Update post</a>
+
+                <a href="{% url 'post_delete' pk=post.id %}" class="btn btn-outline-danger float-right">Delete</a>
+
+            {% endif %}
 
                 <h1 class="mb-5 mt-5">{{ post.title }}</h1>
                     <p class="date"> Автор: {{ post.author }} | Опубликовано: {{ post.publish }}</p>
@@ -19,10 +23,17 @@
                     <p>
                 <a href="{% url 'post_share' pk=post.id %}">Поделиться статьей</a>
                     </p>
-            {% else %}
-                    <h1 class="mb-5 mt-5">{{ post.title }}</h1>
-                    <p class="date"> Автор: {{ post.author }} | Опубликовано: {{ post.publish }}</p>
-                    {{ post.body|linebreaks }}
-            {% endif %}
+
+                {% include 'blog/includes/comments.html' %}
+
+        {% else %}
+
+                <h1 class="mb-5 mt-5">{{ post.title }}</h1>
+                <p class="date"> Автор: {{ post.author }} | Опубликовано: {{ post.publish }}</p>
+                {{ post.body|linebreaks }}
+
+        {% endif %}
+
+
     {% endblock %}
 

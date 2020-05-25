@@ -1,0 +1,23 @@
+<hr>
+
+    <h4>All comments {{ post.comments.count }}</h4>
+    {% for comment in post.comments.all %}
+            <div class="card mb-2">
+                <div class="card-header">
+                    Автор: {{ comment.author }} | Опубликовано: {{ comment.created }} |
+                    <a href="#">Изменить</a>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ comment.body }}</p>
+                </div>
+            </div>
+
+    {% endfor  %}
+
+
+        <form action="{% url 'comment_create' pk=post.id %}" method="post">
+            {% csrf_token %}
+            {{form}}
+            <button type="submit" class="btn btn-outline-info mt-4 float-right ">Отправить</button>
+
+        </form>

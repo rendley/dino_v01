@@ -42,14 +42,18 @@ class RegisterUserForm(WidgetMixinForm, UserCreationForm):
         fields = ('username', 'email', 'password1', 'password2')
 
 
-class CommentForm(WidgetMixinForm, forms.ModelForm):
+class CommentForm(forms.ModelForm):
     """class формы создания comments"""
     class Meta:
         model = Comment
         fields = ('body',)
+        widgets = {
+            "body": forms.Textarea(attrs={"class": "form-control",
+                                          'rows': 5, })
+        }
 
 
-class EmailPostForm(WidgetMixinForm, forms.Form):
+class EmailPostForm(forms.Form):
     """class формы поделиться posts по email"""
     name = forms.CharField(max_length=50)
     email = forms.EmailField()
