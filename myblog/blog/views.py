@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from .models import Post, Comment
+from .models import Post, Comment, Tag
 
 from django.contrib.auth.views import LoginView, LogoutView
 
@@ -62,15 +62,15 @@ class PostListView(ListView):
     model = Post
     queryset = Post.objects.filter(status='published')
     paginate_by = 5
-    # context_object_name = 'posts'
+    # context_object_name = 'post_list'
     # template_name = 'blog/post_list.html'
 
 
 class PostDetailView(DetailView):
     model = Post
     queryset = Post.objects.filter(status='published')
-    # context_object_name = 'posts'
-    # template_name = 'blog/post_list.html'
+    # context_object_name = 'post'
+    # template_name = 'blog/post_detail.html'
 
     def get_context_data(self, **kwargs):
         """
@@ -80,6 +80,22 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['form'] = CommentForm()
         return context
+
+
+class TagListView(ListView):
+    model = Tag
+    queryset = Tag.objects.filter(status='published')
+    paginate_by = 5
+    context_object_name = 'tag_list'
+    template_name = 'blog/tag_list.html'
+
+
+class TagDetailView(DetailView):
+    model = Tag
+    queryset = Tag.objects.filter(status='published')
+    context_object_name = 'tag'
+    template_name = 'blog/tag_detail.html'
+
 
 
 # нужно передать дополнительную проверку form.author = request.user

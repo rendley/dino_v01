@@ -17,6 +17,7 @@ class Post(models.Model):
     created = models.DateTimeField('Дата создания', auto_now_add=True)
     updated = models.DateTimeField('Дата редактирования', auto_now=True)
     status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='published')
+    tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
 
     def save(self, *args, **kwargs):
         # unique slug unicode
@@ -32,7 +33,7 @@ class Post(models.Model):
         ordering = ('-publish',)
 
     def __str__(self):
-        return self.title
+        return f'Пост {self.title}'
 
 
 class Comment(models.Model):
@@ -50,3 +51,16 @@ class Comment(models.Model):
     def __str__(self):
         return f'Комментарий {self.body}, поста {self.post}.'
 
+
+class Tag(models.Model):
+    """Модель тегов"""
+    STATUS_CHOICES = (('draft', 'Draft'), ('published', 'Published'),)
+    title = models.CharField('Название тега', max_length=50, unique=True)
+    slug = models.SlugField(max_length=50, unique=True,)
+    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='published')
+
+    # def get_absolute_url(self):
+    #     return reverse('tag_detail', kwargs={'slug': self.slug, })
+
+    def __str__(self):
+        return f'Тег {self.title}'

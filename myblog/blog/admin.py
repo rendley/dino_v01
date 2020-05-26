@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Post, Comment
+from .models import Post, Comment, Tag
 
 
 @admin.register(Post)
@@ -29,3 +29,8 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ('active', 'created', 'updated')
     search_fields = ('author', 'body')
     # raw_id_fields = ('post',)
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('title', 'slug', 'status', 'id',)
+    prepopulated_fields = {'slug': ('title',)}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+    {% block title %}
+        Tegs
+    {% endblock %}
+
+
+
+
+{% block content %}
+
+    <h1 class="mt-5">
+       Post with "{{ tag.title  }}" tag:
+    </h1>
+
+            {% for post in tag.posts.all %}
+
+                    {% include 'blog/includes/card_post.html' %}
+
+            {% endfor %}
+
+
+{% endblock %}

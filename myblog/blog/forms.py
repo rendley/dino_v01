@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
-from .models import Comment, Post
+from .models import Comment, Post, Tag
 
 
 class WidgetMixinForm(forms.ModelForm):
@@ -51,6 +51,13 @@ class CommentForm(forms.ModelForm):
             "body": forms.Textarea(attrs={"class": "form-control",
                                           'rows': 5, })
         }
+
+
+class TagForm(forms.ModelForm):
+    """class формы создания tags"""
+    class Meta:
+        model = Tag
+        fields = ('title',)
 
 
 class EmailPostForm(forms.Form):

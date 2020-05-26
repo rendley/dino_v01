@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+    {% block title %}
+        Tegs
+    {% endblock %}
+
+
+
+{% block content %}
+
+<h1>
+    <div class="mb-5"> Tags:</div>
+</h1>
+
+       {% for tag in tag_list %}
+
+            <h2><a href="{% url 'tag_detail' slug=tag.slug %}" class="btn btn-primary">{{  tag.title }}</h2></a>
+
+        {% endfor %}
+
+{% endblock %}
