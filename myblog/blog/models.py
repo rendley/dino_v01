@@ -5,6 +5,12 @@ from django.utils import timezone
 from slugify import slugify
 from time import time
 
+#
+class StatusManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status='published')
+
+
 
 class Post(models.Model):
     """Модель постов"""
@@ -18,6 +24,9 @@ class Post(models.Model):
     updated = models.DateTimeField('Дата редактирования', auto_now=True)
     status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='published')
     tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
+
+    objects = models.Manager()
+    custom_status_objects = StatusManager()
 
     def save(self, *args, **kwargs):
         # unique slug unicode
@@ -58,6 +67,8 @@ class Tag(models.Model):
     title = models.CharField('Название тега', max_length=50, unique=True)
     slug = models.SlugField(max_length=50, unique=True,)
     status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='published')
+    # objects = models.Manager()
+    # custom_status_objects = StatusManager()
 
     # def get_absolute_url(self):
     #     return reverse('tag_detail', kwargs={'slug': self.slug, })

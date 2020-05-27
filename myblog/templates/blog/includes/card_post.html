@@ -14,9 +14,12 @@
 
         <div class="card-footer text-muted">
             Tags:
+
                 {% for tag in post.tags.all %}
 
                 <a href="{% url 'tag_detail' slug=tag.slug %}">{{ tag.title }}</a>
+
+                {% if not forloop.last %}, {% endif %}
 
                 {% endfor %}
 

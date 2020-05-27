@@ -60,6 +60,8 @@ class BlogRegisterView(FormView):
 
 class PostListView(ListView):
     model = Post
+    # custom_status_objects - own ModelManager
+    # queryset = Post.custom_status_objects.filter() - not work in objects related
     queryset = Post.objects.filter(status='published')
     paginate_by = 5
     # context_object_name = 'post_list'
@@ -69,6 +71,7 @@ class PostListView(ListView):
 class PostDetailView(DetailView):
     model = Post
     queryset = Post.objects.filter(status='published')
+    # queryset = Post.custom_status_objects.filter()
     # context_object_name = 'post'
     # template_name = 'blog/post_detail.html'
 
@@ -174,7 +177,7 @@ def comment_create(request, pk):
             comment.author = request.user
             comment.save()
             messages.success(request, 'Post successfully create')
-            return redirect('post_list')
+            return redirect('post_detail', slug=post.slug )
 
     form = CommentForm()
     return render(request, 'blog/post_detail.html', {'form': form, })
