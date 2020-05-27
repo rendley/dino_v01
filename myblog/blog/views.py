@@ -10,6 +10,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from .forms import EmailPostForm, CreatePostForm, AuthUserForm, RegisterUserForm, CommentForm
 from django.contrib import messages
+from django.db.models import Count
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -68,21 +69,21 @@ class PostListView(ListView):
     # template_name = 'blog/post_list.html'
 
 
-class PostDetailView(DetailView):
-    model = Post
-    queryset = Post.objects.filter(status='published')
-    # queryset = Post.custom_status_objects.filter()
-    # context_object_name = 'post'
-    # template_name = 'blog/post_detail.html'
-
-    def get_context_data(self, **kwargs):
-        """
-        Через метод get_context_data передается
-        дополнительный контекс в шаблон
-        """
-        context = super().get_context_data(**kwargs)
-        context['form'] = CommentForm()
-        return context
+# class PostDetailView(DetailView):
+#     model = Post
+#     queryset = Post.objects.filter(status='published')
+#     # queryset = Post.custom_status_objects.filter()
+#     # context_object_name = 'post'
+#     # template_name = 'blog/post_detail.html'
+#
+#     def get_context_data(self, **kwargs):
+#         """
+#         Через метод get_context_data передается
+#         дополнительный контекс в шаблон
+#         """
+#         context = super().get_context_data(**kwargs)
+#         context['form'] = CommentForm()
+#         return context
 
 
 class TagListView(ListView):
@@ -122,9 +123,18 @@ class TagDetailView(DetailView):
 #         posts = paginator.page(paginator.num_pages)
 #     return render(request, 'blog/post_list.html', {'posts': posts, 'page': page})
 
-# def post_detail(request, slug):
-#     post = get_object_or_404(Post, slug=slug, )
-#     return render(request, 'blog/post_detail.html', {'post': post, })
+def post_detail(request, slug):
+    post = get_object_or_404(Post, slug=slug, )
+    form = CommentForm()
+    # Формирование списка похожих статей.
+    post_tags_ids = post.tags.values_list('id', flat=True)
+    similar_posts = Post.objects.filter(tags__in=post_tags_ids).exclude(id=post.id)
+    similar_posts = similar_posts.annotate(same_tags=Count('tags'))\
+                        .order_by('-same_tags', '-publish')[:5]
+    print(similar_posts)
+    return render(request, 'blog/post_detail.html', {'post': post,
+                                                     'form': form,
+                                                     'similar_posts': similar_posts, })
 
 
 @login_required(login_url='login_page')

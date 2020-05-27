@@ -19,6 +19,7 @@ urlpatterns = [
     path('update/comment/<int:pk>', comment_update, name='comment_update'),
     path('<int:pk>/share/', post_share, name='post_share'),
 
-    path('post/<slug:slug>/', PostDetailView.as_view(), name='post_detail'),
+    path('post/<slug:slug>/', post_detail, name='post_detail'),
+    # path('post/<slug:slug>/', PostDetailView.as_view(), name='post_detail'),
 
 ]

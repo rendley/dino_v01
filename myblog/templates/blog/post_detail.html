@@ -34,6 +34,14 @@
 
         {% endif %}
 
+                <h2 style="margin-top: 100px; margin-bottom: 50px ">Похожие статьи:</h2>
+
+                    {% for post in similar_posts %}
+
+                       <p><a href="{{ post.get_absolute_url }}">{{ post.title}}</a></p> <br>
+
+                    {% endfor %}
+
 
     {% endblock %}
 
