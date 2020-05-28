@@ -1,3 +1,5 @@
+{% load blog_tags %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +7,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link rel="stylesheet" href="{% static 'css/name.css' %}">
     <title>
         {% block title %}
 
@@ -87,6 +89,26 @@
             <div class="col-2"></div>
         </div>
     </div>
+
+<div class="sidebar">
+    <h2>Всего статей на сайте</h2>
+    <!-- template tag simple-->
+        <p>Всего {% total_post_tag %} статей</p>
+
+    <h3>Последние статьи на сайте</h3>
+        <!-- template tag inclusion-->
+        {% show_latest_posts 3 %}
+
+    <h3>Самые комментируемые статьи</h3>
+        <!-- template tag simple-->
+        {% get_post_most_comments as post_list %}
+    <ul>
+
+        {% for post in post_list %}
+        <li><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
 
 </body>
 </html>
