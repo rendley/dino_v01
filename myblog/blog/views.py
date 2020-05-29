@@ -161,7 +161,7 @@ def post_update(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Post successfully update')
-            return redirect('post_list')
+            return redirect('post_detail', slug=post.slug,)
 
     form = CreatePostForm(instance=post)
     return render(request, 'blog/post_create.html', {'post': post, 'form': form,})
