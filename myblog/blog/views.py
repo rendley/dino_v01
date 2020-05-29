@@ -10,7 +10,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from .forms import EmailPostForm, CreatePostForm, AuthUserForm, RegisterUserForm, CommentForm
 from django.contrib import messages
-from django.db.models import Count
+from django.db.models import Count, Q
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -118,8 +118,10 @@ class TagDetailView(DetailView):
 #     try:
 #         posts = paginator.page(page)
 #     except PageNotAnInteger:
+#     # Если страница не является целым числом, возвращаем первую страницу.
 #         posts = paginator.page(1)
 #     except EmptyPage:
+#     # Если номер страницы больше, чем общее количество страниц, возвращаем последнюю.
 #         posts = paginator.page(paginator.num_pages)
 #     return render(request, 'blog/post_list.html', {'posts': posts, 'page': page})
 
@@ -209,6 +211,20 @@ def comment_update(request, pk):
     #
     # form = CommentForm(instance=comment)
     # return render(request, 'blog/post_detail.html', {'comment': comment, 'form': form,})
+
+
+def search_post(request):
+    search_query = request.GET.get('search','')
+    if search_query:
+        post_list = Post.objects.filter(Q(title__icontains=search_query) |
+                                        Q(body__icontains=search_query))
+    else:
+        post_list = None
+
+    return render(request, 'blog/search_result_list.html', {
+                                        'post_list': post_list,
+                                        'search_query': search_query,
+                                        })
 
 
 @login_required(login_url='login_page')

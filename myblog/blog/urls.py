@@ -22,4 +22,7 @@ urlpatterns = [
     path('post/<slug:slug>/', post_detail, name='post_detail'),
     # path('post/<slug:slug>/', PostDetailView.as_view(), name='post_detail'),
 
+    path('search/', search_post, name='search_post'),
+
+
 ]

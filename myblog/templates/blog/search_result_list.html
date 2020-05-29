@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+    {% block title %}
+        Results search
+    {% endblock %}
+
+    {% block content %}
+
+        <h1 class="mb-5">Результаты поиска по запросу "{{ search_query }}"</h1>
+
+            {% if post_list  %}
+
+                    {% for post in post_list %}
+
+                            {% include 'blog/includes/card_post.html' %}
+
+                    {% endfor %}
+
+                            {% include 'blog/includes/pagination.html' with page=page_obj %}
+
+            {% else %}
+
+                    Результатов по запросу "{{ search_query }}" не найдено
+
+            {% endif %}
+
+    {% endblock %}
